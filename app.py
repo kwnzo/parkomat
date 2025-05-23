@@ -4,21 +4,25 @@ import logging
 from flask_limiter import Limiter
 
 
-
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__ )
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.secret_key = 'ajhaSDHJASHJDAJHSDjnbnm'
-
 
 @app.route('/index')
 def index():
-    return render_template('index/index.html')
+    return render_template('admin.html')
+
+@app.route('/')
+def landing():
+    if request.method == 'GET':
+        return render_template('index.html')
+
 
 def run_server():
     try:
