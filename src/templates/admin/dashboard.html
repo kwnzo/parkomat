@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mb-4">Административная панель</h2>
+    <a href="{{ url_for('admin.spots') }}" class="btn btn-secondary mb-3">Управление местами</a>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">Управление парковками</div>
+                <div class="card-body">
+                    {% for spot in spots %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ spot.number }}</span>
+                            <div>
+                                <span class="badge bg-{% if spot.is_available %}success{% else %}danger{% endif %}">
+                                    {% if spot.is_available %}Свободно{% else %}Занято{% endif %}
+                                </span>
+                                <a href="{{ url_for('admin.toggle_spot', spot_id=spot.id) }}" 
+                                   class="btn btn-sm btn-outline-secondary ms-2">
+                                    Переключить
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Пользователи</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if user.is_admin %}
+                                            <span class="badge bg-danger">Админ</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

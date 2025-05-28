@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2 class="mb-4">Мои бронирования</h2>
+    <div class="card">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Дата начала</th>
+                        <th>Дата окончания</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in reservations %}
+                        <tr>
+                            <td>{{ res.parking_spot.number }}</td>
+                            <td>{{ res.start_time.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td>{{ res.end_time.strftime('%d.%m.%Y %H:%M') if res.end_time else '—' }}</td>
+                            <td>
+                                <span class="badge bg-{% if res.parking_spot.is_available %}success{% else %}danger{% endif %}">
+                                    {% if res.parking_spot.is_available %}Активно{% else %}Завершено{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">Нет активных бронирований</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

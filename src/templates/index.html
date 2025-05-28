@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="mb-4">
+        <form class="row g-3">
+            <div class="col-md-4">
+                <select class="form-select" name="zone" onchange="this.form.submit()">
+                    {% for zone in zones %}
+                    <option value="{{ zone.id }}" {% if zone.id == selected_zone %}selected{% endif %}>
+                        {{ zone.name }} - {{ zone.location }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+    <h2 class="mb-4">Доступные парковочные места</h2>
+    
+    <div class="row">
+        {% for spot in spots %}
+            <div class="col-md-3 mb-3">
+                <div class="parking-spot {% if spot.is_available %}available{% else %}occupied{% endif %}">
+                    <div class="text-center">
+                        <div class="spot-number">{{ spot.number }}</div>
+                        {% if spot.is_available %}
+                            <form method="POST" action="{{ url_for('main.reserve', spot_id=spot.id) }}">
+                                <button type="submit" class="btn btn-sm btn-success mt-2">Забронировать</button>
+                            </form>
+                        {% else %}
+                            <span class="text-muted small">Занято</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

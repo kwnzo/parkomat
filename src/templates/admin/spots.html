@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Управление парковочными местами</h2>
+    <a href="{{ url_for('admin.add_spot') }}" class="btn btn-primary mb-3">Добавить место</a>
+
+    <!-- Выбор зоны -->
+    <form class="mb-4">
+        <select class="form-select" name="zone" onchange="this.form.submit()">
+            <option value="">Выберите зону</option>
+            {% for zone in zones %}
+            <option value="{{ zone.id }}" {% if zone.id == selected_zone %}selected{% endif %}>
+                {{ zone.name }} ({{ zone.location }})
+            </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- Список мест -->
+    {% if spots %}
+    <div class="list-group">
+        {% for spot in spots %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <span class="fw-bold">{{ spot.number }}</span>
+                <span class="badge bg-{% if spot.is_available %}success{% else %}danger{% endif %} ms-2">
+                    {% if spot.is_available %}Свободно{% else %}Занято{% endif %}
+                </span>
+            </div>
+            <div>
+                <a href="#" class="btn btn-sm btn-danger">Удалить</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">Выберите зону для просмотра мест</div>
+    {% endif %}
+</div>
+{% endblock %}

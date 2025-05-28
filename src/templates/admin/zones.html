@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Управление парковочными зонами</h2>
+    <a href="{{ url_for('admin.add_zone') }}" class="btn btn-primary mb-3">Добавить зону</a>
+    
+    <div class="list-group">
+        {% for zone in zones %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <h5>{{ zone.name }}</h5>
+                <small class="text-muted">{{ zone.location }}</small>
+            </div>
+            <div>
+                <a href="#" 
+                    class="btn btn-danger btn-sm" 
+                    onclick="confirmDelete('{{ zone.id }}')">Удалить</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function confirmDelete(zoneId) {
+    if(confirm('Удалить зону?')) {
+        window.location.href = `/admin/delete_zone/${zoneId}`;
+    }
+}
+</script>
+    <script>
+    function confirmDelete(zoneId) {
+        if(confirm('Удалить зону?')) {
+            window.location.href = `/admin/delete_zone/${zoneId}`;
+        }
+    }
+    </script>
+{% endblock %}

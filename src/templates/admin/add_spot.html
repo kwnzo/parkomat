@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавить новое место</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Номер места</label>
+            <input type="text" name="number" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Зона</label>
+            <select class="form-select" name="zone_id" required>
+                <option value="">Выберите зону</option>
+                {% for zone in zones %}
+                <option value="{{ zone.id }}">{{ zone.name }} ({{ zone.location }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="is_available" class="form-check-input" checked>
+            <label class="form-check-label">Доступно для бронирования</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+{% endblock %}
