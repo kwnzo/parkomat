@@ -1,19 +1,28 @@
-from flask import render_template, redirect, url_for, flash, Blueprint, request
+from flask import render_template, redirect, url_for, flash, Blueprint, request, send_file
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import User, ParkingSpot, Reservation, ParkingZone
 from .forms import RegistrationForm, LoginForm
-from . import db, login
+from . import db, login # type: ignore
 from datetime import datetime
+import os
+
+ZONE_FOLDER = os.path.join('static', 'photos')
 
 main = Blueprint('main', __name__)
 auth = Blueprint('auth', __name__)
 
-@main.route('/', methods=['GET'])  # Только GET!
+@main.route('/', methods=['GET'])
 def index():
     zones = ParkingZone.query.all()
     selected_zone = request.args.get('zone', default=1, type=int)
     spots = ParkingSpot.query.filter_by(zone_id=selected_zone).all()
     return render_template('index.html', zones=zones, spots=spots, selected_zone=selected_zone)
+
+
+@main.route('/parkings', methods = ['GET'])
+def show_zones():
+    actual_zone1 = os.path.join('static', 'photos', 'zone1.jpg')
+    return render_template('zones.html', parking_zone1 = actual_zone1)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -33,7 +42,7 @@ def register():
         user = User(
             username=form.username.data,
             email=form.email.data
-        )
+        ) # type: ignore
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -52,7 +61,7 @@ def reserve(spot_id):
             user_id=current_user.id,
             spot_id=spot.id,
             start_time=datetime.utcnow()
-        )
+        ) # type: ignore
         spot.is_available = False
         db.session.add(reservation)
         db.session.commit()
