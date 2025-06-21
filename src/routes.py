@@ -21,8 +21,11 @@ def index():
 
 @main.route('/parkings', methods = ['GET'])
 def show_zones():
-    actual_zone1 = os.path.join('static', 'photos', 'zone1.jpg')
-    return render_template('zones.html', parking_zone1 = actual_zone1)
+    actual_zone1 = os.path.join('static', 'photos', 'parking_zone_one.jpg')
+    actual_zone2 = os.path.join('static', 'photos', 'parking_zone_two.jpg')
+    actual_zone3 = os.path.join('static', 'photos', 'parking_zone_three.jpg')
+    return render_template('zones.html', parking_zone1 = actual_zone1,
+                           parking_zone2 = actual_zone2, parking_zone3 = actual_zone3)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -54,22 +57,39 @@ def register():
 @login_required
 def reserve(spot_id):
     spot = ParkingSpot.query.get_or_404(spot_id)
-    current_zone = request.args.get("zone", type=int)  # Получаем текущую зону
+    current_zone = request.args.get("zone", type=int)
 
-    if spot.is_available:
-        reservation = Reservation(
-            user_id=current_user.id,
-            spot_id=spot.id,
-            start_time=datetime.utcnow()
-        ) # type: ignore
-        spot.is_available = False
-        db.session.add(reservation)
-        db.session.commit()
-        flash("Место успешно забронировано!", "success")
-    else:
+    if not spot.is_available:
         flash("Место уже занято", "danger")
+        return redirect(url_for("main.index", zone=current_zone))
 
-    # Перенаправляем обратно в текущую зону
+    # Получаем start_time и end_time из формы
+    try:
+        start_time_str = request.form.get("start_time")
+        end_time_str = request.form.get("end_time")
+        start_time = datetime.fromisoformat(start_time_str)
+        end_time = datetime.fromisoformat(end_time_str)
+
+        if end_time <= start_time:
+            flash("Время окончания должно быть позже начала", "warning")
+            return redirect(url_for("main.index", zone=current_zone))
+
+    except Exception as e:
+        flash("Ошибка в формате даты/времени", "danger")
+        return redirect(url_for("main.index", zone=current_zone))
+
+    # Создаём бронь
+    reservation = Reservation(
+        user_id=current_user.id,
+        spot_id=spot.id,
+        start_time=start_time,
+        end_time=end_time
+    )
+    spot.is_available = False
+    db.session.add(reservation)
+    db.session.commit()
+
+    flash("Место успешно забронировано!", "success")
     return redirect(url_for("main.index", zone=current_zone))
 
 @main.route('/dashboard')

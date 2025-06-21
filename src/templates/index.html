@@ -1,5 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
+    <style>
+    .parking-spot {
+        background-color: #f8f9fa;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        padding: 16px;
+        height: 100%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: 0.2s ease-in-out;
+    }
+    
+    .parking-spot.available {
+        border-color: #28a745;
+    }
+    
+    .parking-spot.occupied {
+        border-color: #dc3545;
+        background-color: #f0f0f0;
+        opacity: 0.6;
+    }
+    
+    .spot-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    
+    .parking-spot form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    
+    .parking-spot input[type="datetime-local"],
+    .parking-spot button {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    </style>
+    
     <div class="mb-4">
         <form class="row g-3">
             <div class="col-md-4">
@@ -23,7 +68,15 @@
                         <div class="spot-number">{{ spot.number }}</div>
                         {% if spot.is_available %}
                             <form method="POST" action="{{ url_for('main.reserve', spot_id=spot.id) }}">
-                                <button type="submit" class="btn btn-sm btn-success mt-2">Забронировать</button>
+                                <div class="mb-2">
+                                    <label for="start_{{ spot.id }}" class="form-label">Начало</label>
+                                    <input type="datetime-local" class="form-control form-control-sm" name="start_time" id="start_{{ spot.id }}" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="end_{{ spot.id }}" class="form-label">Конец</label>
+                                    <input type="datetime-local" class="form-control form-control-sm" name="end_time" id="end_{{ spot.id }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-success">Забронировать</button>
                             </form>
                         {% else %}
                             <span class="text-muted small">Занято</span>
