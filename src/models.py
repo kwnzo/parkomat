@@ -10,7 +10,7 @@ class User(UserMixin, db.Model):
 
     is_admin = db.Column(db.Boolean, default=False)
     reservations = db.relationship('Reservation', backref='user', lazy=True)
-    is_admin = db.Column(db.Boolean, default=False)  # Уже есть, но добавим метод
+    is_admin = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(256))
 
     def set_password(self, password):
